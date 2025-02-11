@@ -18,8 +18,8 @@ app.set("view engine", "ejs");
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public"))); // Для статических файлов (CSS, JS)
-app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // Для доступа к загруженным фото
+app.use(express.static(path.join(__dirname, "public"))); // For static files (CSS, JS)
+app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // For accsess to uploaded photo
 
 app.use(
   session({
