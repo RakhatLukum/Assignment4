@@ -61,18 +61,18 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Проверяем, что email и пароль указаны
+    // We check that the email and password are specified
     if (!email || !password) {
       return res.render("login", { error: "Email and password are required." });
     }
 
-    // Ищем пользователя по email
+    // We are looking for a user by email
     const user = await User.findOne({ email });
     if (!user) {
       return res.render("login", { error: "Invalid email or password." });
     }
 
-    // Проверяем блокировку аккаунта
+    // Checking the account lock
     if (user.lockUntil && user.lockUntil > Date.now()) {
       const remainingTime = Math.ceil((user.lockUntil - Date.now()) / 1000 / 60);
       return res.render("login", {
@@ -80,12 +80,12 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Проверка пароля
+    // Password verification
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       user.loginAttempts += 1;
 
-      // Блокировка на 5 неудачных попыток
+      // Blocking for 5 failed attempts
       if (user.loginAttempts >= 5) {
         user.lockUntil = Date.now() + 10 * 60 * 1000; // Блокировка на 10 минут
         user.loginAttempts = 0;
@@ -99,20 +99,20 @@ router.post("/login", async (req, res) => {
       return res.render("login", { error: "Invalid email or password." });
     }
 
-    // Сброс счётчика неудачных попыток
+    // Resetting the failed attempt counter
     user.loginAttempts = 0;
     user.lockUntil = null;
     await user.save();
 
-    // Сохраняем пользователя в сессии
+    // Saving the user in the session
     req.session.user = { _id: user._id, name: user.name, email: user.email, avatar: user.avatar };
 
-    // 🔥 Если 2FA включён, перенаправляем на страницу ввода OTP
+    // If 2FA is enabled, we redirect you to the OTP input page.
     if (user.is2FAEnabled) {
       return res.redirect("/verify-otp");
     }
 
-    // Если 2FA выключен, сразу перенаправляем в Dashboard
+    // If 2FA is disabled, we immediately redirect it to the Dashboard.
     res.redirect("/dashboard");
   } catch (err) {
     console.error("Login error:", err);
@@ -159,30 +159,30 @@ router.post('/verify-otp', async (req, res) => {
 
   try {
     if (!req.session.user) {
-      return res.redirect('/login'); // Если пользователь не залогинен
+      return res.redirect('/login'); // If the user is not logged in
     }
 
     const user = await User.findById(req.session.user._id);
 
     if (!user) {
       req.session.destroy();
-      return res.redirect('/login'); // Если пользователь не найден
+      return res.redirect('/login'); // If the user is not found
     }
 
-    // Проверка OTP
+    // OTP Verification
     const verified = speakeasy.totp.verify({
       secret: user.twoFASecret,
       encoding: 'base32',
       token: otp,
-      window: 1 // Допускаем небольшое расхождение во времени (±30 секунд)
+      window: 1 // We allow a slight discrepancy in time (± 30 seconds)
     });
 
     if (verified) {
-      return res.redirect('/dashboard'); // Если OTP верный, перенаправляем в Dashboard
+      return res.redirect('/dashboard'); // If the OTP is correct, we redirect it to the Dashboard.
     }
 
-    // Если OTP неверный, передаем ошибку в шаблон
-    return res.render('verify-otp', { error: "Invalid OTP. Try again." }); // Передаем error
+    // If the OTP is incorrect, we pass the error to the template.
+    return res.render('verify-otp', { error: "Invalid OTP. Try again." }); // Passing error
 
   } catch (err) {
     console.error("Error verifying OTP:", err);

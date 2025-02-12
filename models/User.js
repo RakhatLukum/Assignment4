@@ -7,8 +7,8 @@ const userSchema = new mongoose.Schema({
   avatar: { type: String, default: null },
   loginAttempts: { type: Number, default: 0 },
   lockUntil: { type: Date, default: null },
-  twoFASecret: { type: String, required: false }, // Секретный ключ для 2FA
-  is2FAEnabled: { type: Boolean, default: false }, // Включен ли 2FA
+  twoFASecret: { type: String, required: false }, // Secret key for 2FA
+  is2FAEnabled: { type: Boolean, default: false }, // Is 2FA enabled?
 });
 
 module.exports = mongoose.model("User", userSchema);
