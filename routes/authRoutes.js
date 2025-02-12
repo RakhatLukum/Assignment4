@@ -158,21 +158,34 @@ router.post('/verify-otp', async (req, res) => {
   const { otp } = req.body;
 
   try {
+    if (!req.session.user) {
+      return res.redirect('/login'); // Если пользователь не залогинен
+    }
+
     const user = await User.findById(req.session.user._id);
 
+    if (!user) {
+      req.session.destroy();
+      return res.redirect('/login'); // Если пользователь не найден
+    }
+
+    // Проверка OTP
     const verified = speakeasy.totp.verify({
       secret: user.twoFASecret,
       encoding: 'base32',
-      token: otp
+      token: otp,
+      window: 1 // Допускаем небольшое расхождение во времени (±30 секунд)
     });
 
     if (verified) {
-      return res.redirect('/dashboard'); // Если OTP правильный, редиректим в Dashboard
+      return res.redirect('/dashboard'); // Если OTP верный, перенаправляем в Dashboard
     }
 
-    res.redirect('/verify-otp'); // Если OTP неправильный, показываем страницу снова
+    // Если OTP неверный, передаем ошибку в шаблон
+    return res.render('verify-otp', { error: "Invalid OTP. Try again." }); // Передаем error
+
   } catch (err) {
-    console.error('Error verifying OTP:', err);
+    console.error("Error verifying OTP:", err);
     res.status(500).send('Error verifying OTP');
   }
 });

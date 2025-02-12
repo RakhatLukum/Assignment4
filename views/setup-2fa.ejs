@@ -2,19 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Setup 2FA</title>
-    <link rel="stylesheet" href="/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Set up Two-Factor Authentication</h1>
-        <p>Scan the QR code with your authenticator app.</p>
-        <div class="qr-code">
-            <img src="<%= qrCode %>" alt="QR Code">
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card p-4 shadow" style="max-width: 400px; width: 100%;">
+            <h2 class="text-center">Setup Two-Factor Authentication</h2>
+            <p class="text-center">Scan this QR code in Google Authenticator:</p>
+            <div class="text-center">
+                <img src="<%= qrCode %>" alt="QR Code" class="img-fluid rounded">
+            </div>
+            <p class="text-center mt-3">Or enter this secret manually:</p>
+            <p class="text-center"><strong><%= secret %></strong></p>
+            <div class="d-grid mt-3">
+                <a href="/verify-otp" class="btn btn-primary">Continue to Verify OTP</a>
+            </div>
         </div>
-        <p>Secret: <strong><%= secret %></strong></p>
-        <p>After scanning, enter the OTP in the next step.</p>
-        <a href="/verify-otp">Verify OTP</a>
     </div>
 </body>
 </html>
