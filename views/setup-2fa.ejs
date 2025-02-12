@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Setup 2FA</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Set up Two-Factor Authentication</h1>
+        <p>Scan the QR code with your authenticator app.</p>
+        <div class="qr-code">
+            <img src="<%= qrCode %>" alt="QR Code">
+        </div>
+        <p>Secret: <strong><%= secret %></strong></p>
+        <p>After scanning, enter the OTP in the next step.</p>
+        <a href="/verify-otp">Verify OTP</a>
+    </div>
+</body>
+</html>

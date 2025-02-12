@@ -19,6 +19,7 @@
               <p>No profile picture uploaded.</p>
             <% } %>
           </div>
+          <!-- Avatar Upload Form -->
           <form action="/upload" method="POST" enctype="multipart/form-data" class="mt-3">
             <div class="mb-3">
               <label for="avatar" class="form-label">Upload Profile Picture:</label>
@@ -26,6 +27,16 @@
             </div>
             <button type="submit" class="btn btn-primary w-100">Upload</button>
           </form>
+
+          <!-- Button for 2FA setup -->
+          <% if (!user.is2FAEnabled) { %>
+            <form action="/setup-2fa" method="GET" class="mt-3">
+              <button type="submit" class="btn btn-warning w-100">Enable Two-Factor Authentication (2FA)</button>
+            </form>
+          <% } else { %>
+            <p class="mt-3 text-success">Two-Factor Authentication (2FA) is enabled.</p>
+          <% } %>
+
           <a href="/logout" class="btn btn-danger w-100 mt-3">Logout</a>
         </div>
       </div>
